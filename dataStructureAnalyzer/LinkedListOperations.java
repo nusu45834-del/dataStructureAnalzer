@@ -130,3 +130,4 @@ public class LinkedListOperations {
     }
 }
 
+linkedlist operate empty
