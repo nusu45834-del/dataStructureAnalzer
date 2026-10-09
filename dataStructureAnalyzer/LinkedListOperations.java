@@ -3,6 +3,8 @@ package dataStructureAnalyzer;
 public class LinkedListOperations {
 
     private Node head;
+    private Node tail;
+    private int count;
 
     // Node class
     private static class Node {
@@ -15,22 +17,19 @@ public class LinkedListOperations {
         }
     }
 
-    // Insert a new value at the end
+    // Insert a new value at the end in O(1) time
     public void insert(int value) {
         Node newNode = new Node(value);
 
         if (head == null) {
             head = newNode;
+            tail = newNode;
         } else {
-            Node current = head;
-
-            while (current.next != null) {
-                current = current.next;
-            }
-
-            current.next = newNode;
+            tail.next = newNode;
+            tail = newNode;
         }
 
+        count++;
         System.out.println("Inserted successfully: " + value);
     }
 
@@ -41,14 +40,22 @@ public class LinkedListOperations {
             return;
         }
 
+        // Delete the first node
         if (head.data == value) {
             head = head.next;
+            count--;
+
+            if (head == null) {
+                tail = null;
+            }
+
             System.out.println("Deleted successfully: " + value);
             return;
         }
 
         Node current = head;
 
+        // Find the node before the target
         while (current.next != null &&
                current.next.data != value) {
             current = current.next;
@@ -57,12 +64,19 @@ public class LinkedListOperations {
         if (current.next == null) {
             System.out.println("Value not found: " + value);
         } else {
+            // Update tail if the last node is deleted
+            if (current.next == tail) {
+                tail = current;
+            }
+
             current.next = current.next.next;
+            count--;
+
             System.out.println("Deleted successfully: " + value);
         }
     }
 
-    // Search for a value and return its position
+    // Search for a value and display its position
     public boolean search(int value) {
         Node current = head;
         int position = 1;
@@ -70,7 +84,8 @@ public class LinkedListOperations {
         while (current != null) {
             if (current.data == value) {
                 System.out.println(
-                    "Value " + value + " found at position " + position
+                    "Value " + value +
+                    " found at position " + position
                 );
                 return true;
             }
@@ -83,7 +98,7 @@ public class LinkedListOperations {
         return false;
     }
 
-    // Display all elements and their total count
+    // Display all elements
     public void display() {
         if (head == null) {
             System.out.println("Linked list is empty.");
@@ -92,7 +107,6 @@ public class LinkedListOperations {
         }
 
         Node current = head;
-        int count = 0;
 
         System.out.print("Linked list: ");
 
@@ -103,7 +117,6 @@ public class LinkedListOperations {
                 System.out.print(" -> ");
             }
 
-            count++;
             current = current.next;
         }
 
@@ -116,18 +129,9 @@ public class LinkedListOperations {
         return head == null;
     }
 
-    // Return the number of elements
+    // Return the number of elements in O(1) time
     public int size() {
-        int count = 0;
-        Node current = head;
-
-        while (current != null) {
-            count++;
-            current = current.next;
-        }
-
         return count;
     }
 }
 
-linkedlist operate empty
