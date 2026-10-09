@@ -4,35 +4,32 @@ import java.util.*;
 
 public class GraphOperations {
 
-    private final Map<Integer, List<Integer>> graph = new HashMap<>();
+    private final Map<Integer, List<Integer>> graph = new TreeMap<>();
 
     // Add a new vertex
     public void addVertex(int vertex) {
         if (graph.containsKey(vertex)) {
-            System.out.println("Vertex already exists.");
+            System.out.println("Vertex already exists: " + vertex);
             return;
         }
 
         graph.put(vertex, new ArrayList<>());
-        System.out.println("Vertex added successfully.");
+        System.out.println("Vertex added successfully: " + vertex);
     }
 
-    // Add a directed edge between two vertices
+    // Add a directed edge
     public void addEdge(int source, int destination) {
+        if (source == destination) {
+            System.out.println("Self-loop is not allowed.");
+            return;
+        }
 
         if (!graph.containsKey(source)) {
-            System.out.println("Source vertex does not exist. Adding it now.");
             addVertex(source);
         }
 
         if (!graph.containsKey(destination)) {
-            System.out.println("Destination vertex does not exist. Adding it now.");
             addVertex(destination);
-        }
-
-        if (source == destination) {
-            System.out.println("Self-loop is not allowed.");
-            return;
         }
 
         if (graph.get(source).contains(destination)) {
@@ -41,37 +38,35 @@ public class GraphOperations {
         }
 
         graph.get(source).add(destination);
+        Collections.sort(graph.get(source));
 
-        System.out.println("Edge added successfully.");
+        System.out.println("Edge added successfully: "
+                + source + " -> " + destination);
     }
 
-    // Display the graph
+    // Display graph and statistics
     public void displayGraph() {
-
         if (graph.isEmpty()) {
             System.out.println("Graph is empty.");
             return;
         }
 
-        System.out.println("\nGraph:");
+        System.out.println("\nGraph (Adjacency List):");
 
-        for (Map.Entry<Integer, List<Integer>> entry : graph.entrySet()) {
-
-            System.out.print(entry.getKey() + " -> ");
-
-            for (Integer neighbour : entry.getValue()) {
-                System.out.print(neighbour + " ");
-            }
-
-            System.out.println();
+        for (Map.Entry<Integer, List<Integer>> entry
+                : graph.entrySet()) {
+            System.out.println(entry.getKey() + " -> "
+                    + entry.getValue());
         }
+
+        System.out.println("Total vertices: " + getVertexCount());
+        System.out.println("Total edges: " + getEdgeCount());
     }
 
     // Breadth First Search
     public void bfs(int startVertex) {
-
         if (!graph.containsKey(startVertex)) {
-            System.out.println("Vertex not found.");
+            System.out.println("Vertex not found: " + startVertex);
             return;
         }
 
@@ -85,13 +80,10 @@ public class GraphOperations {
                 + startVertex + "]: ");
 
         while (!queue.isEmpty()) {
-
             int current = queue.poll();
-
             System.out.print(current + " ");
 
-            for (Integer neighbour : graph.get(current)) {
-
+            for (int neighbour : graph.get(current)) {
                 if (visited.add(neighbour)) {
                     queue.offer(neighbour);
                 }
@@ -103,9 +95,8 @@ public class GraphOperations {
 
     // Depth First Search
     public void dfs(int startVertex) {
-
         if (!graph.containsKey(startVertex)) {
-            System.out.println("Vertex not found.");
+            System.out.println("Vertex not found: " + startVertex);
             return;
         }
 
@@ -115,22 +106,51 @@ public class GraphOperations {
                 + startVertex + "]: ");
 
         dfsRecursive(startVertex, visited);
-
         System.out.println();
     }
 
     // Recursive DFS helper
     private void dfsRecursive(int vertex, Set<Integer> visited) {
-
         visited.add(vertex);
-
         System.out.print(vertex + " ");
 
-        for (Integer neighbour : graph.get(vertex)) {
-
+        for (int neighbour : graph.get(vertex)) {
             if (!visited.contains(neighbour)) {
                 dfsRecursive(neighbour, visited);
             }
         }
     }
+
+    // Count vertices
+    public int getVertexCount() {
+        return graph.size();
+    }
+
+    // Count directed edges
+    public int getEdgeCount() {
+        int count = 0;
+
+        for (List<Integer> neighbours : graph.values()) {
+            count += neighbours.size();
+        }
+
+        return count;
+    }
+
+    // Check whether a vertex exists
+    public boolean containsVertex(int vertex) {
+        return graph.containsKey(vertex);
+    }
+
+    // Check whether a directed edge exists
+    public boolean containsEdge(int source, int destination) {
+        return graph.containsKey(source)
+                && graph.get(source).contains(destination);
+    }
+
+    // Check whether the graph is empty
+    public boolean isEmpty() {
+        return graph.isEmpty();
+    }
 }
+
